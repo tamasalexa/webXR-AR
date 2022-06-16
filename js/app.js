@@ -1,4 +1,4 @@
-import * as THREE from './threejs_r141/three.module.js';
+import * as THREE from './threejs_r141/three.js';
 import { VRButton } from './threejs_r141/VRButton.js';
 import { XRControllerModelFactory } from '../../libs/three/jsm/XRControllerModelFactory.js';
 import { OrbitControls } from './threejs_r141/OrbitControls.js';
