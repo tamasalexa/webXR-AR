@@ -15,6 +15,27 @@
     <meta name="theme-color" content="#ffffff">
 
     <title>WebXR AR</title>
+
+    <style type="text/css">
+        div {
+            width: 200px;
+            height: 200px;
+            float: left;
+            margin: 10px 10px 10px 10px;
+        }
+
+        img {
+            width: 80%;
+            height: 80%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;            
+        }
+        button {
+            width: 100%;
+            
+        }
+    </style>
 </head>
 
 <body>
@@ -23,20 +44,36 @@
         import { App } from './js/app.js';
 
         document.addEventListener("DOMContentLoaded", function () {
-            const app = new App();            
-            window.app = app;            
+            const app = new App();
+            window.app = app;
         });
     </script>
 
-    <div class="container">
-        <button style="width: 100px; height: 100px" onclick="window.app.showObj3D('./models/obj3DTextures/','./models/obj3D/stair_01/','esc3d');">Load Stair</button>
-        <button style="width: 100px; height: 100px" onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_01/','BN002H5_LAM1-2');">Load Fence Panel 01</button>
-        <button style="width: 100px; height: 100px" onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_02/','BN005H2_DEC3V');">Load Fence Panel 02</button>
-        <button style="width: 100px; height: 100px" onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_03/','BN005H4_DEC2');">Load Fence Panel 03</button>
-        <button style="width: 100px; height: 100px" onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_04/','FC009H2L6_EXO1');">Load Fence Panel 04</button>
-        
-
+    <div onclick="window.app.showObj3D('./models/obj3DTextures/','./models/obj3D/stair_01/','esc3d');">
+        <img src='./models/obj3D/stair_01/esc3d.png' />
+        <button>Load Stair</button>
     </div>
+    <div onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_01/','BN002H5_LAM1-2');">
+        <img src='./models/obj3D/fencePanel_01/BN002H5_LAM1.png' />
+        <button>Load Fence Panel 01</button>
+    </div>
+
+    <div onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_02/','BN005H2_DEC3V');">
+        <img src='./models/obj3D/fencePanel_02/BN005H2_DEC3V.png' />
+        <button>Load Fence Panel 02</button>
+    </div>
+
+    <div onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_03/','BN005H4_DEC2');">
+        <img src='./models/obj3D/fencePanel_03/BN005H4_DEC2.png' />
+        <button>Load Fence Panel 03</button>
+    </div>
+
+    <div onclick="window.app.showObj3D(null,'./models/obj3D/fencePanel_04/','FC009H2L6_EXO1');">
+        <img src='./models/obj3D/fencePanel_04/FC009H2L6_EXO1.png' />
+        <button>Load Fence Panel 04</button>
+    </div>
+
+
 
 </body>
 

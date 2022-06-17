@@ -217,7 +217,7 @@ class App {
             objLoader.load(objName + '.obj', function (obj) {
 
                 //let isStair = itemType == 10;
-                let scaleVal = 0.001;
+               // let scaleVal = 0.001;
                 //object.scale.x = object.scale.y = object.scale.z = scaleVal;
                 let geometry, material;
 
