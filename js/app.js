@@ -196,12 +196,10 @@ class App {
 
     }
 
-    showObj3D() {
-        let texturesURL = "./models/obj3DTextures/";
-
-        let objURL = "./models/obj3D/1/";
-        let objName = "esc3d";
-
+    showObj3D(texturesURL, objURL, objName) {
+        if (texturesURL === null) {
+            texturesURL = objURL;
+        }
         this.initAR();
         const self = this;
         this.loadingBar.visible = true;
