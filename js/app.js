@@ -228,7 +228,7 @@ class App {
                         child.material.side = THREE.DoubleSide;
                     }
                     if (child.isMesh) {
-                        child.scale.x = child.scale.y = child.scale.z = scaleVal;
+                        //child.scale.x = child.scale.y = child.scale.z = scaleVal;
                     }
                 });
 
@@ -236,7 +236,7 @@ class App {
 
                 //    if (isStair || obj.children.length > 1) {
                         //if (isStair) {
-                        obj.rotation.x = (3 * Math.PI) / 2;
+                        //obj.rotation.x = (3 * Math.PI) / 2;
                         //}
 
                         //let box = new THREE.Box3().setFromObject(object);
