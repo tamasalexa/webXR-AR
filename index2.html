@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--favicon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!--<link rel="apple-touch-icon" sizes="180x180" href="../../css/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../css/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../css/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../css/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../../css/favicon/safari-pinned-tab.svg" color="#5bbad5">-->
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>TransformControls</title>
+
+    <style type="text/css">
+        
+    </style>
+</head>
+
+<body>
+
+    <script type="module">
+        import * as THREE from './js/threejs_r141/three.js';
+        import { OrbitControls } from './js/threejs_r141/OrbitControls.js';
+        import { TransformControls } from './js/threejs_r141/TransformControls.js';        
+
+        class App {
+            constructor() {
+
+                this.raycaster = new THREE.Raycaster();                
+
+                console.log("window", window);
+                this.renderer = new THREE.WebGLRenderer();
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setAnimationLoop(this.render.bind(this));
+                document.body.appendChild(this.renderer.domElement);
+               
+                const aspect = window.innerWidth / window.innerHeight;
+                this.camera = new THREE.PerspectiveCamera(65, aspect, 0.01, 30000);
+                this.camera.position.set(1000, 500, 1000);
+                this.camera.lookAt(0, 200, 0);
+
+                this.scene = new THREE.Scene();
+                this.scene.add(new THREE.GridHelper(1000, 10, 0x888888, 0x444444));
+
+                const light = new THREE.DirectionalLight(0xffffff, 2);
+                light.position.set(1, 1, 1);
+                this.scene.add(light);
+
+                const geometry = new THREE.BoxGeometry(200, 200, 200);
+                const material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+                this.obj3D = new THREE.Mesh(geometry, material);
+                this.obj3D.addEventListener('select', () => { console.log("!!!!") });
+                this.scene.add(this.obj3D);
+
+                this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+                this.orbitControls.update();
+                this.orbitControls.addEventListener('change', this.render.bind(this));
+
+                this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
+                this.transformControls.addEventListener('change', this.render.bind(this));
+                this.transformControls.addEventListener('dragging-changed', (event) => {
+                    this.orbitControls.enabled = !event.value;
+                });
+                //this.transformControls.attach(this.obj3D);
+                //this.scene.add(this.transformControls);
+
+                this.pointer = null;                
+                window.addEventListener('click', (event) => { this.setPointer(event); });
+                window.addEventListener('touchend', (event) => { this.setPointer(event); });
+                //this.render();
+               
+            }
+
+            setPointer(event) {
+                this.pointer = new THREE.Vector2();
+                this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+                this.pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+                console.log("setPointer", this.pointer);
+            }
+
+            render() {
+                if (this.pointer) {
+                    this.raycaster.setFromCamera(new THREE.Vector2(this.pointer.x, this.pointer.y), this.camera);
+                    this.pointer = null;
+
+                    const intersects = this.raycaster.intersectObjects(this.scene.children);
+                    
+                    console.log("!!!! this.scene.children", this.scene.children);
+                    console.log("intersects", intersects);
+                    console.log("intersects.length = " + intersects.length);
+                    
+                    for (let ii = 0; ii < intersects.length; ii++) {
+                        console.log("intersects[ii].object.type =" + intersects[ii].object.type);
+                        //this.selObj = intersects[ii].object;
+                        if (intersects[ii].object == this.obj3D) {
+                            this.obj3D.selected = true;                            
+                        }
+                    }
+                    this.selectObj3D();
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            selectObj3D() {
+                console.log("this.obj3D.selected=" + this.obj3D.selected);
+
+
+
+                if (this.obj3D.selected) {
+                    this.obj3D.material.color.set(0x0000FF);
+
+                    if (!this.scene.children.includes(this.transformControls)) {
+                        this.transformControls.attach(this.obj3D);
+                        this.scene.add(this.transformControls);
+                    } else {
+                        let mode = this.transformControls.getMode() == "translate" ? "rotate" : "translate";
+                        this.transformControls.setMode(mode);
+                    }                    
+                } else {
+                    this.obj3D.material.color.set(0xffff00);
+
+                    this.transformControls.detach(this.obj3D);
+                    this.scene.remove(this.transformControls);
+                }
+                
+            }
+            
+
+        }
+
+        let app = new App();
+
+
+    </script>
+
+</body>
+</html>
