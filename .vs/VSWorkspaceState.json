@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\js",
+    "\\js\\three125",
+    "\\js\\threejs_r141"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\js\\app.js",
   "PreviewInSolutionExplorer": false
 }
