@@ -75,9 +75,11 @@ class App {
         this.hitTestSource = null;
 
         function onSelect() {
+            
+
             console.log("!!!! -0- onSelect");
             console.log("!!!! -0- onSelect", self.obj3D);
-            if (self.obj3D === undefined) return;
+            if (self.obj3D === undefined || self.obj3D.visible) return;
             console.log("!!!! -1- onSelect");
             if (self.reticle.visible) {
                 self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
@@ -154,7 +156,17 @@ class App {
                 self.renderer.setAnimationLoop(self.render.bind(self));
                 console.log("4 showObj3D");
                 self.transformControls.attach(self.obj3D);
-                self.transformControls.setMode("rotate");
+
+                //translate
+                self.transformControls.setMode("translate");
+                //rotate
+                //self.transformControls.setMode("rotate");
+                if (self.transformControls.getMode() == 'rotate') {
+                    self.transformControls.showX = false;
+                    self.transformControls.showZ = false;
+                }
+
+
                 //self.scene.add(self.transformControls);
                 console.log("5 showObj3D");
               
