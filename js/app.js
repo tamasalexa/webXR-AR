@@ -76,42 +76,38 @@ class App {
         this.hitTestSourceRequested = false;
         this.hitTestSource = null;
 
-        function onSelect() {
+        //function onSelect() {
             
 
-            console.log("!!!! -0- onSelect");
-            console.log("!!!! -0- onSelect", self.obj3D);
-            if (self.obj3D === undefined || self.obj3D.visible) return;
-            console.log("!!!! -1- onSelect");
-            if (self.reticle.visible) {
-                self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
-                self.obj3D.visible = true;
-                //self.scene.add(self.transformControls);
-                console.log("!!!! -2- onSelect", self.obj3D);
+        //    console.log("!!!! -0- onSelect");
+        //    console.log("!!!! -0- onSelect", self.obj3D);
+        //    if (self.obj3D === undefined ) return;
+        //    console.log("!!!! -1- onSelect");
+        //    if (self.reticle.visible) {
+        //        self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
+        //        self.obj3D.visible = true;
+        //        //self.scene.add(self.transformControls);
+        //        console.log("!!!! -2- onSelect", self.obj3D);
+        //    }
+        //}
 
-            }
-        }
-
-        this.controller = this.renderer.xr.getController(0);
-
-        console.log("this.controller", this.controller);
-        console.log("this.renderer.xr", this.renderer.xr);
+        this.controller = this.renderer.xr.getController(0);        
+        //this.controller.addEventListener('select', onSelect);        
+        //this.controller.addEventListener('touch', () => { let date = new Date(); console.log(`click - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `); });
         
-        this.controller.addEventListener('select', onSelect);        
-        this.controller.addEventListener('touch', () => { let date = new Date(); console.log(`click - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `); });
-
-        console.log("this.controller", this.controller);
-        console.log("this.renderer.xr", this.renderer.xr);
-
         this.scene.add(this.controller);
 
         this.gestures = new ControllerGestures(this.renderer);
         this.gestures.addEventListener('tap', (ev) => {
             //console.log( 'tap' ); 
             //self.ui.updateElement('info', 'tap');
-            if (!self.obj3D.object.visible) {
-                self.obj3D.object.visible = true;
-                self.obj3D.object.position.set(0, -0.3, -0.5).add(ev.position);
+            if (!self.obj3D.object.visible) {               
+                //self.obj3D.object.position.set(0, -0.3, -0.5).add(ev.position);
+                if (self.reticle.visible) {
+                    self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);                    
+                }
+                self.obj3D.visible = true;
+                
                 //self.scene.add(self.obj3D.object);
             }
         });
