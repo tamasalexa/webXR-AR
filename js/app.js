@@ -34,7 +34,7 @@ class App {
         this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
         this.transformControls.addEventListener('change', this.render.bind(this));
         this.transformControls.addEventListener('dragging-changed', (event) => {
-            this.orbitControls.enabled = !event.value;
+           // this.orbitControls.enabled = !event.value;
         });
 
         this.reticle = new THREE.Mesh(
@@ -158,7 +158,7 @@ class App {
                 self.transformControls.attach(self.obj3D);
 
                 //translate
-                self.transformControls.setMode("translate");
+                //self.transformControls.setMode("translate");
                 //rotate
                 //self.transformControls.setMode("rotate");
                 if (self.transformControls.getMode() == 'rotate') {
