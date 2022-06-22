@@ -1,8 +1,8 @@
 import * as THREE from './three125/three.js';
 import { MTLLoader } from './three125/MTLLoader.js';
 import { OBJLoader } from './three125/OBJLoader.js';
-import { RGBELoader } from './three125/RGBELoader.js';
-import { TransformControls } from './three125/TransformControls.js';
+
+
 import { ControllerGestures } from './three125/ControllerGestures.js'
 
 
