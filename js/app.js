@@ -183,8 +183,6 @@ class App {
         //    }
         //});
 
-
-
         self.renderer.setAnimationLoop(self.render.bind(self));
     }
 
@@ -193,7 +191,6 @@ class App {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
-
     
     loadObj3D(texturesURL, objURL, objName) {
         if (texturesURL === null) {
@@ -229,15 +226,11 @@ class App {
                     }
                 });               
 
-                self.scene.add(obj);
-                console.log("0 loadObj3D");
-                self.obj3D = obj;
-                console.log("1 loadObj3D");
+                self.scene.add(obj);               
+                self.obj3D = obj;                
                 self.obj3D.visible = false;
-                console.log("2 loadObj3D");
-                self.loadingBar.visible = false;
-                console.log("3 loadObj3D");
                 
+                self.loadingBar.visible = false;
                 
                 self.transformControls.attach(self.obj3D);
 
@@ -250,9 +243,7 @@ class App {
                 //    self.transformControls.showZ = false;
                 //}
 
-
-                //self.scene.add(self.transformControls);
-                console.log("5 loadObj3D");
+                //self.scene.add(self.transformControls);                
               
                 //if (isStair) {
                 //    //center the object
@@ -291,31 +282,23 @@ class App {
 
         const sessionInit = { requiredFeatures: ['hit-test'] };
 
-
         function onSessionStarted(session) {
             self.ui.mesh.position.set(0, -0.15, -0.3);
             session.addEventListener('end', onSessionEnded);
-
             self.renderer.xr.setReferenceSpaceType('local');
             self.renderer.xr.setSession(session);
-
             currentSession = session;
-
         }
 
         function onSessionEnded() {
             self.camera.remove(self.ui.mesh);
             currentSession.removeEventListener('end', onSessionEnded);
-
             currentSession = null;
-
             if (self.obj3D !== null) {
                 self.scene.remove(self.obj3D);
                 self.obj3D = null;
             }
-
             self.renderer.setAnimationLoop(null);
-
         }
 
         if (currentSession === null) {
