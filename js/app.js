@@ -3,13 +3,17 @@ import { MTLLoader } from './three125/MTLLoader.js';
 import { OBJLoader } from './three125/OBJLoader.js';
 
 
-import { ControllerGestures } from './three125/ControllerGestures.js'
+import { TransformControls } from './three125/TransformControls.js';
+import { CanvasUI } from './three125/CanvasUI.js';
 
 
 import { LoadingBar } from './LoadingBar.js';
 
 class App {
     constructor() {
+
+        this.createUI();
+
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -33,11 +37,11 @@ class App {
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         container.appendChild(this.renderer.domElement);
       
-        //this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-        //this.transformControls.addEventListener('change', this.render.bind(this));
-        //this.transformControls.addEventListener('dragging-changed', (event) => {
-           // this.orbitControls.enabled = !event.value;
-        //});
+        this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
+        this.transformControls.addEventListener('change', this.render.bind(this));
+        this.transformControls.addEventListener('dragging-changed', (event) => {
+            this.orbitControls.enabled = !event.value;
+        });
 
         this.reticle = new THREE.Mesh(
             new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(- Math.PI / 2),
@@ -48,10 +52,28 @@ class App {
         this.reticle.visible = false;
         this.scene.add(this.reticle);
 
+        
+
         this.setupXR();
 
         window.addEventListener('resize', this.resize.bind(this));
+                
+    }
 
+    createUI() {
+
+        const config = {
+            panelSize: { width: 0.15, height: 0.038 },
+            height: 128,
+            info: { type: "text" }
+        }
+        const content = {
+            info: "Debug info"
+        }
+
+        const ui = new CanvasUI(content, config);
+
+        this.ui = ui;
     }
 
     setupXR() {
@@ -76,85 +98,90 @@ class App {
         this.hitTestSourceRequested = false;
         this.hitTestSource = null;
 
-        //function onSelect() {
-            
+        function onSelect() {
+         
 
-        //    console.log("!!!! -0- onSelect");
-        //    console.log("!!!! -0- onSelect", self.obj3D);
-        //    if (self.obj3D === undefined ) return;
-        //    console.log("!!!! -1- onSelect");
-        //    if (self.reticle.visible) {
-        //        self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
-        //        self.obj3D.visible = true;
-        //        //self.scene.add(self.transformControls);
-        //        console.log("!!!! -2- onSelect", self.obj3D);
-        //    }
-        //}
+            console.log("!!!! -0- onSelect");
+            console.log("!!!! -0- onSelect", self.obj3D);
+            if (self.obj3D === undefined ) return;
+            console.log("!!!! -1- onSelect");
+            if (self.reticle.visible) {
+                self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
+                self.obj3D.visible = true;
+                self.scene.add(self.transformControls);
+                console.log("!!!! -2- onSelect", self.obj3D);
+            }
+        }
 
         this.controller = this.renderer.xr.getController(0);        
-        //this.controller.addEventListener('select', onSelect);        
-        //this.controller.addEventListener('touch', () => { let date = new Date(); console.log(`click - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `); });
+        this.controller.addEventListener('select', onSelect);        
+        this.controller.addEventListener('touch', () => { let date = new Date(); console.log(`click - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `); });
         
         this.scene.add(this.controller);
 
-        this.gestures = new ControllerGestures(this.renderer);
-        this.gestures.addEventListener('tap', (ev) => {
-            //console.log( 'tap' ); 
-            //self.ui.updateElement('info', 'tap');
-            if (!self.obj3D.object.visible) {               
-                //self.obj3D.object.position.set(0, -0.3, -0.5).add(ev.position);
-                if (self.reticle.visible) {
-                    self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);                    
-                }
-                self.obj3D.visible = true;
+        //this.gestures = new ControllerGestures(this.renderer);
+        //this.gestures.addEventListener('tap', (ev) => {
+        //    //console.log( '!!! tap' ); 
+        //    self.ui.updateElement('info', 'tap');
+        //    if (!self.obj3D.object.visible) {               
+        //        //self.obj3D.object.position.set(0, -0.3, -0.5).add(ev.position);
+        //        if (self.reticle.visible) {
+        //            self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);                    
+        //        }
+        //        self.obj3D.visible = true;
                 
-                //self.scene.add(self.obj3D.object);
-            }
-        });
-        this.gestures.addEventListener('doubletap', (ev) => {
-            //console.log( 'doubletap');             
-        });
-        this.gestures.addEventListener('press', (ev) => {
-            //console.log( 'press' );                
-        });
-        this.gestures.addEventListener('pan', (ev) => {
-            //console.log( ev );
-            if (ev.initialise !== undefined) {
-                self.startPosition = self.obj3D.object.position.clone();
-            } else {
-                const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(3));
-                self.obj3D.object.position.copy(pos);
-                //self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}`);
-            }
-        });
-        this.gestures.addEventListener('swipe', (ev) => {
-            //console.log( ev );   
-            //self.ui.updateElement('info', `swipe ${ev.direction}`);
-            if (self.obj3D.object.visible) {
-                self.obj3D.object.visible = false;
-                self.scene.remove(self.obj3D.object);
-            }
-        });
-        this.gestures.addEventListener('pinch', (ev) => {
-            //console.log( 'pinch' );
-            if (ev.initialise !== undefined) {
-                self.startScale = self.obj3D.object.scale.clone();
-            } else {
-                const scale = self.startScale.clone().multiplyScalar(ev.scale);
-                self.obj3D.object.scale.copy(scale);
-                //self.ui.updateElement('info', `pinch delta:${ev.delta.toFixed(3)} scale:${ev.scale.toFixed(2)}`);
-            }
-        });
-        this.gestures.addEventListener('rotate', (ev) => {
-            //      sconsole.log( ev ); 
-            if (ev.initialise !== undefined) {
-                self.startQuaternion = self.knight.object.quaternion.clone();
-            } else {
-                self.obj3D.object.quaternion.copy(self.startQuaternion);
-                self.obj3D.object.rotateY(ev.theta);
-                //self.ui.updateElement('info', `rotate ${ev.theta.toFixed(3)}`);
-            }
-        });
+        //       //self.scene.add(self.obj3D.object);
+        //    }
+        //});
+        //this.gestures.addEventListener('doubletap', (ev) => {
+        //    //console.log( 'doubletap');             
+        //    self.ui.updateElement('info', 'doubletap');
+        //});
+        //this.gestures.addEventListener('press', (ev) => {
+        //    //console.log( 'press' );                
+        //    self.ui.updateElement('info', 'press');
+        //});
+        //this.gestures.addEventListener('pan', (ev) => {
+        //    //console.log( ev );
+        //    self.ui.updateElement('info', 'pan');
+        //    if (ev.initialise !== undefined) {
+        //        self.startPosition = self.obj3D.object.position.clone();
+        //    } else {
+        //        const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(3));
+        //        self.obj3D.object.position.copy(pos);
+        //        self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}`);
+        //    }
+        //});
+        //this.gestures.addEventListener('swipe', (ev) => {
+        //    //console.log( ev );   
+        //    self.ui.updateElement('info', 'swipe');
+        //    if (self.obj3D.object.visible) {
+        //        self.obj3D.object.visible = false;
+        //        self.scene.remove(self.obj3D.object);
+        //    }
+        //});
+        //this.gestures.addEventListener('pinch', (ev) => {
+        //    //console.log( 'pinch' );
+        //    self.ui.updateElement('info', 'pinch');
+        //    if (ev.initialise !== undefined) {
+        //        self.startScale = self.obj3D.object.scale.clone();
+        //    } else {
+        //        const scale = self.startScale.clone().multiplyScalar(ev.scale);
+        //        self.obj3D.object.scale.copy(scale);
+        //        //self.ui.updateElement('info', `pinch delta:${ev.delta.toFixed(3)} scale:${ev.scale.toFixed(2)}`);
+        //    }
+        //});
+        //this.gestures.addEventListener('rotate', (ev) => {
+        //    //      sconsole.log( ev ); 
+        //    self.ui.updateElement('info', 'rotate');
+        //    if (ev.initialise !== undefined) {
+        //        self.startQuaternion = self.knight.object.quaternion.clone();
+        //    } else {
+        //        self.obj3D.object.quaternion.copy(self.startQuaternion);
+        //        self.obj3D.object.rotateY(ev.theta);
+        //        self.ui.updateElement('info', `rotate ${ev.theta.toFixed(3)}`);
+        //    }
+        //});
 
 
 
@@ -168,7 +195,7 @@ class App {
     }
 
     
-    showObj3D(texturesURL, objURL, objName) {
+    loadObj3D(texturesURL, objURL, objName) {
         if (texturesURL === null) {
             texturesURL = objURL;
         }
@@ -203,16 +230,16 @@ class App {
                 });               
 
                 self.scene.add(obj);
-                console.log("0 showObj3D");
+                console.log("0 loadObj3D");
                 self.obj3D = obj;
-                console.log("1 showObj3D");
+                console.log("1 loadObj3D");
                 self.obj3D.visible = false;
-                console.log("2 showObj3D");
+                console.log("2 loadObj3D");
                 self.loadingBar.visible = false;
-                console.log("3 showObj3D");
+                console.log("3 loadObj3D");
                 
                 
-                //self.transformControls.attach(self.obj3D);
+                self.transformControls.attach(self.obj3D);
 
                 //translate
                 //self.transformControls.setMode("translate");
@@ -225,7 +252,7 @@ class App {
 
 
                 //self.scene.add(self.transformControls);
-                console.log("5 showObj3D");
+                console.log("5 loadObj3D");
               
                 //if (isStair) {
                 //    //center the object
@@ -266,7 +293,7 @@ class App {
 
 
         function onSessionStarted(session) {
-
+            self.ui.mesh.position.set(0, -0.15, -0.3);
             session.addEventListener('end', onSessionEnded);
 
             self.renderer.xr.setReferenceSpaceType('local');
@@ -277,7 +304,7 @@ class App {
         }
 
         function onSessionEnded() {
-
+            self.camera.remove(self.ui.mesh);
             currentSession.removeEventListener('end', onSessionEnded);
 
             currentSession = null;
