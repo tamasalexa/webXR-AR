@@ -48,7 +48,16 @@ class App{
         this.origin = new THREE.Vector3();
         this.euler = new THREE.Euler();
         this.quaternion = new THREE.Quaternion();
-        
+
+        this.reticle = new THREE.Mesh(
+            new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(- Math.PI / 2),
+            new THREE.MeshBasicMaterial({ color: 0xff0000 })
+        );
+
+        this.reticle.matrixAutoUpdate = false;
+        this.reticle.visible = false;
+        this.scene.add(this.reticle);
+
         this.initScene();
         this.setupXR();
         
@@ -216,7 +225,10 @@ class App{
     }
     
     setupXR(){
-        this.renderer.xr.enabled = true; 
+        this.renderer.xr.enabled = true;
+
+        this.hitTestSourceRequested = false;
+        this.hitTestSource = null;
         
         const self = this;
         let controller, controller1;
@@ -243,7 +255,8 @@ class App{
             //}
 
             if (!self.obj3D.visible) {                
-                self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
+                //self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
+                self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
                 self.obj3D.visible = true;
                 //self.scene.add(self.obj3D);
             }
@@ -262,7 +275,8 @@ class App{
             if (ev.initialise !== undefined){
                 self.startPosition = self.obj3D.position.clone();
             }else{
-                const pos = self.startPosition.clone().add( ev.delta.multiplyScalar(3) );
+                //const pos = self.startPosition.clone().add( ev.delta.multiplyScalar(3) );
+                const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(20));
                 self.obj3D.position.copy( pos );
                 self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}` );
             } 
@@ -291,7 +305,8 @@ class App{
                 self.startQuaternion = self.obj3D.quaternion.clone();
             }else{
                 self.obj3D.quaternion.copy( self.startQuaternion );
-                self.obj3D.rotateY( ev.theta );
+                //self.obj3D.rotateY(ev.theta);
+                self.obj3D.rotateY(ev.theta * 10);
                 self.ui.updateElement('info', `rotate ${ev.theta.toFixed(3)}`  );
             }
         });
@@ -304,8 +319,62 @@ class App{
         this.camera.updateProjectionMatrix();
         this.renderer.setSize( window.innerWidth, window.innerHeight );  
     }
+
+    requestHitTestSource() {
+        const self = this;
+
+        const session = this.renderer.xr.getSession();
+
+        session.requestReferenceSpace('viewer').then(function (referenceSpace) {
+
+            session.requestHitTestSource({ space: referenceSpace }).then(function (source) {
+
+                self.hitTestSource = source;
+
+            });
+
+        });
+
+        session.addEventListener('end', function () {
+
+            self.hitTestSourceRequested = false;
+            self.hitTestSource = null;
+            self.referenceSpace = null;
+
+        });
+
+        this.hitTestSourceRequested = true;
+
+    }
+
+    getHitTestResults(frame) {
+        const hitTestResults = frame.getHitTestResults(this.hitTestSource);
+
+        if (hitTestResults.length) {
+
+            const referenceSpace = this.renderer.xr.getReferenceSpace();
+            const hit = hitTestResults[0];
+            const pose = hit.getPose(referenceSpace);
+
+            this.reticle.visible = true;
+            this.reticle.matrix.fromArray(pose.transform.matrix);
+
+        } else {
+
+            this.reticle.visible = false;
+
+        }
+
+    }
     
-	render( ) {   
+	//render( ) {   
+    render(timestamp, frame) {
+
+        if (frame) {
+            if (this.hitTestSourceRequested === false) this.requestHitTestSource()
+
+            if (this.hitTestSource) this.getHitTestResults(frame);
+        }
         //const dt = this.clock.getDelta();
         this.stats.update();
         if ( this.renderer.xr.isPresenting ){
