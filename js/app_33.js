@@ -257,12 +257,13 @@ class App{
             //    self.scene.add( self.obj3D ); 
             //}
             
-            if (!self.obj3D.visible) {                
-                //self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
+            //if (!self.obj3D.visible) {                
+            //self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
+            alert("self.reticle - " + self.reticle.visible);
                 self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
                 self.obj3D.visible = true;
                 //self.scene.add(self.obj3D);
-            }
+            //}
 
         });
         this.gestures.addEventListener( 'doubletap', (ev)=>{
