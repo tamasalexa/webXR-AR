@@ -5,11 +5,11 @@ import { GLTFLoader } from './three125/GLTFLoader.js';
 import { MTLLoader } from './three125/MTLLoader.js';
 import { OBJLoader } from './three125/OBJLoader.js';
 
-import { Stats } from './stats.module.js';
+
 import { CanvasUI } from './three125/CanvasUI.js'
 import { ARButton } from './ARButton.js';
 import { LoadingBar } from './LoadingBar.js';
-import { Player } from './three125/Player.js';
+
 import { ControllerGestures } from './three125/ControllerGestures.js'; 
 
 class App{
@@ -45,8 +45,7 @@ class App{
         this.controls.target.set(0, 3.5, 0);
         this.controls.update();
         
-        this.stats = new Stats();
-        document.body.appendChild( this.stats.dom );
+        
         
         this.origin = new THREE.Vector3();
         this.euler = new THREE.Euler();
@@ -131,7 +130,7 @@ class App{
         if (texturesURL === null) {
             texturesURL = objURL;
         }
-        
+        this.initAR();
         const self = this;
         this.loadingBar.visible = true;
 
@@ -210,6 +209,41 @@ class App{
 
     }
 
+    initAR() {
+        let currentSession = null;
+        const self = this;
+
+        const sessionInit = { requiredFeatures: ['hit-test'] };
+
+        function onSessionStarted(session) {
+            self.ui.mesh.position.set(0, -0.15, -0.3);
+            session.addEventListener('end', onSessionEnded);
+            self.renderer.xr.setReferenceSpaceType('local');
+            self.renderer.xr.setSession(session);
+            currentSession = session;
+        }
+
+        function onSessionEnded() {
+            self.camera.remove(self.ui.mesh);
+            currentSession.removeEventListener('end', onSessionEnded);
+            currentSession = null;
+            if (self.obj3D !== null) {
+                self.scene.remove(self.obj3D);
+                self.obj3D = null;
+            }
+            self.renderer.setAnimationLoop(null);
+        }
+
+        if (currentSession === null) {
+
+            navigator.xr.requestSession('immersive-ar', sessionInit).then(onSessionStarted);
+
+        } else {
+
+            currentSession.end();
+
+        }
+    }
     
     createUI() {
         
@@ -259,7 +293,7 @@ class App{
             
             //if (!self.obj3D.visible) {                
             //self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
-            alert("self.reticle - " + self.reticle.visible);
+                alert("self.reticle - " + self.reticle.visible);
                 self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
                 self.obj3D.visible = true;
                 //self.scene.add(self.obj3D);
@@ -380,7 +414,7 @@ class App{
             if (this.hitTestSource) this.getHitTestResults(frame);
         }
         //const dt = this.clock.getDelta();
-        this.stats.update();
+        
         if ( this.renderer.xr.isPresenting ){
             this.gestures.update();
             this.ui.update();

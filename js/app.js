@@ -18,9 +18,7 @@ class App {
         document.body.appendChild(container);
 
         this.loadingBar = new LoadingBar();
-        this.loadingBar.visible = false;
-
-      
+        this.loadingBar.visible = false;      
 
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
         this.camera.position.set(0, 1.6, 0);
