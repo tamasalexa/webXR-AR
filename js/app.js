@@ -11,7 +11,7 @@ import { LoadingBar } from './LoadingBar.js';
 
 class App {
     constructor() {
-
+        alert(`test - ${Date.now()}`);
         this.createUI();
 
         const container = document.createElement('div');

@@ -13,7 +13,10 @@ import { Player } from './three125/Player.js';
 import { ControllerGestures } from './three125/ControllerGestures.js'; 
 
 class App{
-	constructor(){
+    constructor() {
+
+        alert(`2 test - ${Date.now()}`);
+
 		const container = document.createElement( 'div' );
 		document.body.appendChild( container );
         
