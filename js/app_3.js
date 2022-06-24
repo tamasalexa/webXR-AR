@@ -253,7 +253,7 @@ class App{
             //    self.obj3D.position.set( 0, -0.3, -0.5 ).add( ev.position );
             //    self.scene.add( self.obj3D ); 
             //}
-
+            
             if (!self.obj3D.visible) {                
                 //self.obj3D.position.set(0, -0.3, -0.5).add(ev.position);
                 self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
@@ -286,7 +286,7 @@ class App{
             self.ui.updateElement('info', `swipe ${ev.direction}` );
             if (self.obj3D.visible){
                 self.obj3D.visible = false;
-                self.scene.remove( self.obj3D ); 
+                //self.scene.remove( self.obj3D ); 
             }
         });
         this.gestures.addEventListener( 'pinch', (ev)=>{
