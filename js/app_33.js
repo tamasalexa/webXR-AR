@@ -7,7 +7,7 @@ import { OBJLoader } from './three125/OBJLoader.js';
 
 
 import { CanvasUI } from './three125/CanvasUI.js'
-import { ARButton } from './ARButton.js';
+//import { ARButton } from './ARButton.js';
 import { LoadingBar } from './LoadingBar.js';
 
 import { ControllerGestures } from './three125/ControllerGestures.js'; 
@@ -279,7 +279,7 @@ class App{
             self.camera.remove( self.ui.mesh );
         }
         
-        const btn = new ARButton( this.renderer, { onSessionStart, onSessionEnd });//, sessionInit: { optionalFeatures: [ 'dom-overlay' ], domOverlay: { root: document.body } } } );
+        //const btn = new ARButton( this.renderer, { onSessionStart, onSessionEnd });//, sessionInit: { optionalFeatures: [ 'dom-overlay' ], domOverlay: { root: document.body } } } );
         
         this.gestures = new ControllerGestures( this.renderer );
         this.gestures.addEventListener( 'tap', (ev)=>{
