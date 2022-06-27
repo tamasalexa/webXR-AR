@@ -131,6 +131,7 @@ class App {
                 if (self.reticle.visible) {
                     self.obj3D.position.setFromMatrixPosition(self.reticle.matrix);
                     self.obj3D.visible = true;
+                    console.log('!!! tap self.obj3D.position', self.obj3D.position);
                 }
             }
         });
@@ -147,6 +148,7 @@ class App {
             } else {
                 //const pos = self.startPosition.clone().add( ev.delta.multiplyScalar(3) );
                 const pos = self.startPosition.clone().add(ev.delta.multiplyScalar(20));
+                pos.y = self.startPosition.y;
                 self.obj3D.position.copy(pos);
                 //self.ui.updateElement('info', `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}`);
                 console.log("!! info " + `pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}`);
