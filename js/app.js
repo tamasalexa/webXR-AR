@@ -50,9 +50,9 @@ class App {
         if (texturesURL === null) {
             texturesURL = objURL;
         }
-
+       
         const self = this;
-        
+       
         self.loadingBar.visible = true;
 
         let mtlLoader = new MTLLoader();
@@ -85,9 +85,9 @@ class App {
                 self.obj3D = obj;
                 self.obj3D.visible = false;
 
-                self.loadingBar.visible = false;
-
-                self.initAR();
+               self.loadingBar.visible = false;
+               self.initAR();
+                
             }, // onProgress callback
                 function (xhr) {
                     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
